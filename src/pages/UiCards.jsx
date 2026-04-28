@@ -7,16 +7,16 @@ const { Title, Text, Paragraph } = Typography;
 const { Meta } = Card;
 
 export default function UiCards() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, themeTokens } = useOutletContext();
 
   return (
     <>
       <Title level={4} style={{ marginTop: 0, marginBottom: 24 }}>UI Cards Gallery</Title>
-      
+
       <Row gutter={[24, 24]} style={{ display: 'flex' }}>
         {/* Basic Content Card */}
         <Col xs={24} sm={12} lg={8}>
-          <Card title="Basic Content" bordered={false} className="premium-hover" style={{ height: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Card title="Basic Content" variant="borderless" className="premium-hover" style={{ height: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <div style={{ flex: 1 }}>
               <Paragraph>
                 This is a standard card component containing some basic text. It is often used to group related information and provide a clean separation of content within a complex layout.
@@ -33,7 +33,7 @@ export default function UiCards() {
             className="premium-hover"
             style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
             cover={<img alt="example" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" style={{ height: 200, objectFit: 'cover' }} />}
-            bordered={false}
+            variant="borderless"
           >
             <Meta title="Retro Gaming Setup" description="Explore the ultimate nostalgic workstation." />
           </Card>
@@ -50,7 +50,7 @@ export default function UiCards() {
               <EditOutlined key="edit" />,
               <EllipsisOutlined key="ellipsis" />,
             ]}
-            bordered={false}
+            variant="borderless"
           >
             <Meta
               avatar={<Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=CardAvatar" />}
@@ -62,11 +62,11 @@ export default function UiCards() {
 
         {/* Social Media Style Card */}
         <Col xs={24} sm={12} lg={8}>
-          <Card bordered={false} className="premium-hover" style={{ height: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1 }}>
+          <Card variant="borderless" className="premium-hover" style={{ height: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
               <Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=Designer" />
               <div style={{ marginLeft: 12 }}>
-                <Text strong style={{ display: 'block' }}>Alex Designer</Text>
+                <Text strong style={{ display: 'block' }}>Nimra Designer</Text>
                 <Text type="secondary" style={{ fontSize: 12 }}>2 hours ago</Text>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function UiCards() {
             <img alt="post image" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" style={{ width: '100%', borderRadius: 8, marginBottom: 16 }} />
             <Space size="large">
               <Space style={{ cursor: 'pointer', color: primaryColor }}><HeartOutlined /> 1.2k</Space>
-              <Space style={{ cursor: 'pointer', color: '#888' }}><ShareAltOutlined /> 45</Space>
+              <Space style={{ cursor: 'pointer', color: themeTokens.colorTextSecondary }}><ShareAltOutlined /> 45</Space>
             </Space>
           </Card>
         </Col>
@@ -84,7 +84,7 @@ export default function UiCards() {
         {/* Inner Tabbed Card */}
         <Col xs={24} sm={12} lg={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             className="premium-hover"
             style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
             bodyStyle={{ flex: 1 }}

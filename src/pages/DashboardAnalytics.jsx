@@ -1,7 +1,7 @@
 import React from 'react';
-import { Row, Col, Card, Typography, Progress, Badge, Space, Tag, Table, List, Checkbox } from 'antd';
+import { Row, Col, Card, Typography, Progress, Badge, Space, Tag, Table, Checkbox } from 'antd';
 import { ArrowUpOutlined, StarFilled } from '@ant-design/icons';
-import { Area, Pie, Column, Gauge } from '@ant-design/plots';
+import { Area, Pie, Column } from '@ant-design/plots';
 import {
   totalViewsData,
   deviceData,
@@ -10,7 +10,9 @@ import {
   totalClicksData,
   visitorsGrowthData,
   campaignStats,
-  newUsers
+  newUsers,
+  detailedViewsData,
+  detailedRevenueData
 } from '../data/mockData';
 import { useOutletContext } from 'react-router-dom';
 import { Avatar } from 'antd'; // Make sure to import Avatar from antd
@@ -18,7 +20,7 @@ import { Avatar } from 'antd'; // Make sure to import Avatar from antd
 const { Title, Text } = Typography;
 
 export default function DashboardAnalytics() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, isLight, themeTokens } = useOutletContext();
 
   // Table columns
   const columns = [
@@ -66,13 +68,23 @@ export default function DashboardAnalytics() {
   ];
 
   // Chart Configs
+  const flattenedRevenueData = detailedRevenueData.flatMap(item => [
+    { month: item.month, value: item.revenue, category: 'Revenue' },
+    { month: item.month, value: item.profit, category: 'Profit' },
+    { month: item.month, value: item.expenses, category: 'Expenses' },
+  ]);
+
   const monthlyRevenueConfig = {
-    data: monthlyRevenueData,
+    data: flattenedRevenueData,
     xField: 'month',
-    yField: 'revenue',
-    color: `l(90) 0:${primaryColor} 1:#00e5ff`,
+    yField: 'value',
+    colorField: 'category',
+    isGroup: true,
+    theme: isLight ? 'light' : 'dark',
+    color: [primaryColor, '#00e5ff', '#ff00e4'],
     columnStyle: { radius: [4, 4, 0, 0] },
-    meta: { revenue: { alias: 'Revenue %' } },
+    slider: { x: { style: { fill: 'rgba(255,255,255,0.1)' } } },
+    legend: { position: 'top-left' },
   };
 
   const deviceConfig = {
@@ -80,11 +92,12 @@ export default function DashboardAnalytics() {
     angleField: 'value',
     colorField: 'type',
     innerRadius: 0.7,
+    theme: isLight ? 'light' : 'dark',
     color: [primaryColor, '#00e5ff', '#ff00e4'],
     statistic: {
       title: false,
       content: {
-        style: { whiteSpace: 'pre-wrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#fff', fontSize: '20px' },
+        style: { whiteSpace: 'pre-wrap', overflow: 'hidden', textOverflow: 'ellipsis', color: themeTokens.colorText, fontSize: '20px' },
         content: '68%\nTotal Views',
       },
     },
@@ -95,18 +108,26 @@ export default function DashboardAnalytics() {
     data: totalClicksData,
     xField: 'month',
     yField: 'clicks',
+    theme: isLight ? 'light' : 'dark',
     color: `l(90) 0:#ff00e4 1:${primaryColor}`,
     columnStyle: { radius: [4, 4, 0, 0] },
   };
 
+  const flattenedViewsData = detailedViewsData.flatMap(item => [
+    { date: item.date, value: item.views, category: 'Total Views' },
+    { date: item.date, value: item.uniqueViews, category: 'Unique Views' },
+  ]);
+
   const totalViewsConfig = {
-    data: totalViewsData,
+    data: flattenedViewsData,
     xField: 'date',
-    yField: 'views',
+    yField: 'value',
+    colorField: 'category',
     shapeField: 'smooth',
-    color: '#00e5ff',
-    style: { fill: `linear-gradient(-90deg, transparent 0%, #00e5ff 100%)`, fillOpacity: 0.3 },
-    point: { size: 4, shape: 'circle', style: { fill: '#fff', stroke: '#00e5ff', lineWidth: 2 } },
+    theme: isLight ? 'light' : 'dark',
+    color: ['#00e5ff', primaryColor],
+    slider: { x: { style: { fill: 'rgba(255,255,255,0.1)' } } },
+    legend: { position: 'top-right' },
   };
 
   const totalUsersConfig = {
@@ -114,6 +135,7 @@ export default function DashboardAnalytics() {
     xField: 'date',
     yField: 'value',
     shapeField: 'smooth',
+    theme: isLight ? 'light' : 'dark',
     color: primaryColor,
     style: { fill: `linear-gradient(-90deg, transparent 0%, ${primaryColor} 100%)`, fillOpacity: 0.3 },
     axis: { x: { label: null }, y: { label: null } }
@@ -124,9 +146,9 @@ export default function DashboardAnalytics() {
       {/* Top Row: Welcome & Core Metrics */}
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={12}>
-          <Card bordered={false} className="premium-hover" style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
+          <Card variant="borderless" className="premium-hover" style={{ height: '100%', position: 'relative', overflow: 'hidden' }}>
             <div style={{ zIndex: 2, position: 'relative' }}>
-              <Title level={3} style={{ marginTop: 0 }}>Welcome back Umar Farooq!</Title>
+              <Title level={3} style={{ marginTop: 0 }}>Welcome back Umar!</Title>
               <Text type="secondary">You have 2 new messages and 15 new tasks.</Text>
 
               <Row gutter={24} style={{ marginTop: 32 }}>
@@ -152,27 +174,28 @@ export default function DashboardAnalytics() {
         </Col>
 
         <Col xs={24} md={12} lg={6}>
-          <Card bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <Text type="secondary">Active Users</Text>
             <Title level={2} style={{ margin: '8px 0' }}>42.5K</Title>
-            <div style={{ height: 120 }}>
-              <Gauge
-                percent={0.75}
-                color={['#00e5ff', '#333']}
-                innerRadius={0.8}
-                indicator={false}
-                statistic={{ title: false, content: false }}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+              <Progress
+                type="dashboard"
+                percent={75}
+                strokeColor="#00e5ff"
+                railColor={themeTokens.colorBorder}
+                size={140}
+                format={() => ''}
               />
             </div>
             <Space size="large" style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
               <Space size="small"><Badge color="#00e5ff" /><Text type="secondary">Desktop</Text></Space>
-              <Space size="small"><Badge color="#333" /><Text type="secondary">Mobile</Text></Space>
+              <Space size="small"><Badge color={themeTokens.colorTextSecondary} /><Text type="secondary">Mobile</Text></Space>
             </Space>
           </Card>
         </Col>
 
         <Col xs={24} md={12} lg={6}>
-          <Card bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <Text type="secondary">Total Users</Text>
@@ -190,7 +213,7 @@ export default function DashboardAnalytics() {
       {/* Middle Row: Revenue & Traffic */}
       <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={8}>
-          <Card title="Monthly Revenue" bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card title="Monthly Revenue" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <div style={{ height: 250 }}>
               <Column {...monthlyRevenueConfig} />
             </div>
@@ -198,7 +221,7 @@ export default function DashboardAnalytics() {
         </Col>
 
         <Col xs={24} md={12} lg={8}>
-          <Card title="Device Type" bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card title="Device Type" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <div style={{ height: 250 }}>
               <Pie {...deviceConfig} />
             </div>
@@ -206,7 +229,7 @@ export default function DashboardAnalytics() {
         </Col>
 
         <Col xs={24} md={12} lg={8}>
-          <Card title="Total Clicks" bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card title="Total Clicks" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <div style={{ height: 250 }}>
               <Column {...totalClicksConfig} />
             </div>
@@ -216,7 +239,7 @@ export default function DashboardAnalytics() {
 
       <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Total Views" bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card title="Total Views" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <div style={{ height: 300 }}>
               <Area {...totalViewsConfig} />
             </div>
@@ -224,8 +247,8 @@ export default function DashboardAnalytics() {
         </Col>
 
         <Col xs={24} lg={8}>
-          <Card title="Campaign Stats" bordered={false} className="premium-hover" style={{ height: '100%' }}>
-            <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <Card title="Campaign Stats" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
               {campaignStats.map((stat, idx) => (
                 <div key={idx}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -235,7 +258,7 @@ export default function DashboardAnalytics() {
                   <Progress percent={stat.percent} strokeColor={stat.color} showInfo={false} />
                 </div>
               ))}
-            </Space>
+            </div>
           </Card>
         </Col>
       </Row>
@@ -243,7 +266,7 @@ export default function DashboardAnalytics() {
       {/* Bottom Row Widgets & Tables */}
       <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Recent Orders" bordered={false} className="premium-hover" style={{ height: '100%' }}>
+          <Card title="Recent Orders" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
             <Table
               columns={columns}
               dataSource={recentOrdersData}
@@ -254,23 +277,21 @@ export default function DashboardAnalytics() {
         </Col>
 
         <Col xs={24} lg={8}>
-          <Card title="New Users" bordered={false} className="premium-hover" style={{ height: '100%' }}>
-            <List
-              itemLayout="horizontal"
-              dataSource={newUsers}
-              renderItem={item => (
-                <List.Item
-                  actions={[<Checkbox key="check" />]}
-                  style={{ borderBottom: '1px solid #333' }}
-                >
-                  <List.Item.Meta
-                    avatar={<Avatar src={item.avatar} />}
-                    title={<Text strong>{item.name}</Text>}
-                    description={<Text type="secondary">{item.handle}</Text>}
-                  />
-                </List.Item>
-              )}
-            />
+          <Card title="New Users" variant="borderless" className="premium-hover" style={{ height: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {newUsers.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: `1px solid ${themeTokens.colorBorder}` }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Avatar src={item.avatar} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <Text strong style={{ lineHeight: 1.2 }}>{item.name}</Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>{item.handle}</Text>
+                    </div>
+                  </div>
+                  <Checkbox />
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
       </Row>

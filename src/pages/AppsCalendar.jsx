@@ -6,7 +6,7 @@ import { useOutletContext } from 'react-router-dom';
 const { Title, Text } = Typography;
 
 export default function AppsCalendar() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, themeTokens } = useOutletContext();
 
   const days = ['Mon 16', 'Tue 17', 'Wed 18', 'Thu 19', 'Fri 20', 'Sat 21', 'Sun 22'];
   const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
@@ -30,9 +30,9 @@ export default function AppsCalendar() {
           <Text type="secondary">Manage your weekly schedule</Text>
         </div>
         <Space>
-          <Button icon={<LeftOutlined />} style={{ background: '#1e1e1e', borderColor: '#333', color: '#fff' }} />
+          <Button icon={<LeftOutlined />} style={{ background: themeTokens.colorBgContainer, borderColor: themeTokens.colorBorder, color: themeTokens.colorText }} />
           <Text strong style={{ fontSize: 16, margin: '0 8px' }}>Oct 16 - Oct 22, 2023</Text>
-          <Button icon={<RightOutlined />} style={{ background: '#1e1e1e', borderColor: '#333', color: '#fff' }} />
+          <Button icon={<RightOutlined />} style={{ background: themeTokens.colorBgContainer, borderColor: themeTokens.colorBorder, color: themeTokens.colorText }} />
           <Button type="primary" icon={<PlusOutlined />} style={{ background: primaryColor, borderColor: primaryColor, borderRadius: 8, marginLeft: 16, boxShadow: `0 4px 12px ${primaryColor}40` }}>
             New Event
           </Button>
@@ -42,29 +42,29 @@ export default function AppsCalendar() {
       <Row gutter={[24, 24]}>
         {/* Main Custom Weekly Grid */}
         <Col xs={24} lg={18}>
-          <Card bordered={false} bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden', background: '#1a1a1a', border: '1px solid #333', borderRadius: 12 }}>
+          <Card bordered={false} bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden', background: themeTokens.colorBgBase, border: `1px solid ${themeTokens.colorBorder}`, borderRadius: 12 }}>
             {/* Header: Days of the week */}
-            <div style={{ display: 'flex', borderBottom: '1px solid #333', background: '#222' }}>
-              <div style={{ width: 60, borderRight: '1px solid #333' }} /> {/* Empty corner block */}
+            <div style={{ display: 'flex', borderBottom: `1px solid ${themeTokens.colorBorder}`, background: themeTokens.colorBgContainer }}>
+              <div style={{ width: 60, borderRight: `1px solid ${themeTokens.colorBorder}` }} /> {/* Empty corner block */}
               {days.map((day, idx) => (
-                <div key={day} style={{ flex: 1, padding: '16px 0', textAlign: 'center', borderRight: idx === days.length - 1 ? 'none' : '1px solid #333' }}>
+                <div key={day} style={{ flex: 1, padding: '16px 0', textAlign: 'center', borderRight: idx === days.length - 1 ? 'none' : `1px solid ${themeTokens.colorBorder}` }}>
                   <Text type="secondary" style={{ display: 'block', marginBottom: 4, fontSize: 12 }}>{day.split(' ')[0]}</Text>
-                  <Text strong style={{ fontSize: 22, color: idx === 3 ? primaryColor : '#fff' }}>{day.split(' ')[1]}</Text>
+                  <Text strong style={{ fontSize: 22, color: idx === 3 ? primaryColor : themeTokens.colorText }}>{day.split(' ')[1]}</Text>
                 </div>
               ))}
             </div>
-            
+
             {/* Grid Body */}
             <div style={{ position: 'relative', height: hours.length * 60, overflowY: 'auto' }}>
               {hours.map((hour, i) => (
-                <div key={hour} style={{ display: 'flex', height: 60, borderBottom: '1px solid #2a2a2a' }}>
+                <div key={hour} style={{ display: 'flex', height: 60, borderBottom: `1px solid ${themeTokens.colorBorder}` }}>
                   {/* Hour Labels */}
-                  <div style={{ width: 60, borderRight: '1px solid #333', textAlign: 'center', padding: '8px 0', background: '#1e1e1e' }}>
+                  <div style={{ width: 60, borderRight: `1px solid ${themeTokens.colorBorder}`, textAlign: 'center', padding: '8px 0', background: themeTokens.colorBgContainer }}>
                     <Text type="secondary" style={{ fontSize: 12 }}>{hour}</Text>
                   </div>
                   {/* Vertical grid lines */}
                   {days.map((day, idx) => (
-                    <div key={`${day}-${hour}`} style={{ flex: 1, borderRight: idx === days.length - 1 ? 'none' : '1px solid #2a2a2a' }} />
+                    <div key={`${day}-${hour}`} style={{ flex: 1, borderRight: idx === days.length - 1 ? 'none' : `1px solid ${themeTokens.colorBorder}` }} />
                   ))}
                 </div>
               ))}
@@ -87,11 +87,11 @@ export default function AppsCalendar() {
                   zIndex: 10,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                 }}>
-                  <Text strong style={{ display: 'block', color: '#fff', fontSize: 13, lineHeight: 1.2, marginBottom: 4 }}>{ev.title}</Text>
+                  <Text strong style={{ display: 'block', color: themeTokens.colorText, fontSize: 13, lineHeight: 1.2, marginBottom: 4 }}>{ev.title}</Text>
                   <Text type="secondary" style={{ fontSize: 11 }}>{ev.type}</Text>
                 </div>
               ))}
-              
+
               {/* Current Time Indicator Line (Fake) */}
               <div style={{ position: 'absolute', top: '210px', left: 60, right: 0, height: 2, background: '#f5222d', zIndex: 5 }} />
               <div style={{ position: 'absolute', top: '206px', left: 56, width: 10, height: 10, borderRadius: '50%', background: '#f5222d', zIndex: 6 }} />
@@ -101,49 +101,49 @@ export default function AppsCalendar() {
 
         {/* Sidebar */}
         <Col xs={24} lg={6}>
-          <Card bordered={false} title="Calendars" style={{ marginBottom: 24, background: '#1a1a1a', border: '1px solid #333', borderRadius: 12 }}>
+          <Card bordered={false} title="Calendars" style={{ marginBottom: 24, background: themeTokens.colorBgBase, border: `1px solid ${themeTokens.colorBorder}`, borderRadius: 12 }}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge color={primaryColor} text={<Text style={{ color: '#fff' }}>Work</Text>} />
+                <Badge color={primaryColor} text={<Text style={{ color: themeTokens.colorText }}>Work</Text>} />
                 <Text type="secondary">4</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge color="#faad14" text={<Text style={{ color: '#fff' }}>Review</Text>} />
+                <Badge color="#faad14" text={<Text style={{ color: themeTokens.colorText }}>Review</Text>} />
                 <Text type="secondary">2</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge color="#52c41a" text={<Text style={{ color: '#fff' }}>External</Text>} />
+                <Badge color="#52c41a" text={<Text style={{ color: themeTokens.colorText }}>External</Text>} />
                 <Text type="secondary">1</Text>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge color="#f5222d" text={<Text style={{ color: '#fff' }}>Personal</Text>} />
+                <Badge color="#f5222d" text={<Text style={{ color: themeTokens.colorText }}>Personal</Text>} />
                 <Text type="secondary">1</Text>
               </div>
             </Space>
           </Card>
-          
-          <Card bordered={false} title="Team Status" style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: 12 }}>
+
+          <Card bordered={false} title="Team Status" style={{ background: themeTokens.colorBgBase, border: `1px solid ${themeTokens.colorBorder}`, borderRadius: 12 }}>
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Space>
                   <Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alice" />
-                  <Text style={{ color: '#fff' }}>Alice Freeman</Text>
+                  <Text style={{ color: themeTokens.colorText }}>Umar ghafoor</Text>
                 </Space>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#52c41a', boxShadow: '0 0 8px #52c41a' }} />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Space>
                   <Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bob" />
-                  <Text style={{ color: '#fff' }}>Bob Smith</Text>
+                  <Text style={{ color: themeTokens.colorText }}>Eshan</Text>
                 </Space>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#faad14' }} />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Space>
                   <Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie" />
-                  <Text style={{ color: '#fff' }}>Charlie Davis</Text>
+                  <Text style={{ color: themeTokens.colorText }}>Danish</Text>
                 </Space>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#333' }} />
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: themeTokens.colorTextSecondary }} />
               </div>
             </Space>
           </Card>

@@ -2,46 +2,38 @@ import React from 'react';
 import { Row, Col, Card, Typography, Table, Space, Avatar, Tag } from 'antd';
 import { Line, Pie } from '@ant-design/plots';
 import { useOutletContext } from 'react-router-dom';
-import { recentOrdersData } from '../data/mockData';
+import { recentOrdersData, detailedEcommerceSalesData, detailedCategoryData } from '../data/mockData';
 
 const { Title, Text } = Typography;
 
 export default function DashboardEcommerce() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, isLight } = useOutletContext();
 
-  const salesData = [
-    { month: 'Jan', sales: 3000 },
-    { month: 'Feb', sales: 4200 },
-    { month: 'Mar', sales: 3800 },
-    { month: 'Apr', sales: 5100 },
-    { month: 'May', sales: 4900 },
-    { month: 'Jun', sales: 6500 },
-    { month: 'Jul', sales: 7200 },
-  ];
-
-  const categoryData = [
-    { type: 'Electronics', value: 45 },
-    { type: 'Clothing', value: 25 },
-    { type: 'Home', value: 15 },
-    { type: 'Sports', value: 10 },
-    { type: 'Books', value: 5 },
-  ];
+  const flattenedSalesData = detailedEcommerceSalesData.flatMap(item => [
+    { date: item.date, value: item.sales, category: 'Sales Volume ($)' },
+    { date: item.date, value: item.orders * 20, category: 'Orders (Scaled)' },
+  ]);
 
   const lineConfig = {
-    data: salesData,
-    xField: 'month',
-    yField: 'sales',
+    data: flattenedSalesData,
+    xField: 'date',
+    yField: 'value',
+    colorField: 'category',
     shapeField: 'smooth',
-    color: primaryColor,
-    point: { size: 4, shape: 'diamond' },
+    theme: isLight ? 'light' : 'dark',
+    color: [primaryColor, '#ff00e4'],
+    point: { size: 3, shape: 'circle' },
+    slider: { x: { style: { fill: isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)' } } },
+    legend: { position: 'top-right' },
   };
 
   const pieConfig = {
-    data: categoryData,
+    data: detailedCategoryData,
     angleField: 'value',
     colorField: 'type',
     innerRadius: 0.6,
-    color: [primaryColor, '#1890ff', '#13c2c2', '#faad14', '#f5222d'],
+    theme: isLight ? 'light' : 'dark',
+    color: [primaryColor, '#1890ff', '#13c2c2', '#faad14', '#f5222d', '#722ed1'],
     legend: { position: 'right' }
   };
 
@@ -66,25 +58,25 @@ export default function DashboardEcommerce() {
       <Title level={4} style={{ marginTop: 0, marginBottom: 24 }}>eCommerce Overview</Title>
       <Row gutter={[24, 24]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false}>
+          <Card variant="borderless">
             <Text type="secondary">Total Revenue</Text>
             <Title level={2} style={{ margin: '8px 0', color: primaryColor }}>$124.5K</Title>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false}>
+          <Card variant="borderless">
             <Text type="secondary">Total Orders</Text>
             <Title level={2} style={{ margin: '8px 0' }}>1,452</Title>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false}>
+          <Card variant="borderless">
             <Text type="secondary">Conversion Rate</Text>
             <Title level={2} style={{ margin: '8px 0' }}>3.2%</Title>
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card bordered={false}>
+          <Card variant="borderless">
             <Text type="secondary">Avg. Order Value</Text>
             <Title level={2} style={{ margin: '8px 0' }}>$85.20</Title>
           </Card>
@@ -93,14 +85,14 @@ export default function DashboardEcommerce() {
 
       <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Sales Over Time" bordered={false}>
+          <Card title="Sales Over Time" variant="borderless">
             <div style={{ height: 300 }}>
               <Line {...lineConfig} />
             </div>
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Top Categories" bordered={false}>
+          <Card title="Top Categories" variant="borderless">
             <div style={{ height: 300 }}>
               <Pie {...pieConfig} />
             </div>
@@ -110,7 +102,7 @@ export default function DashboardEcommerce() {
 
       <Row style={{ marginTop: 24 }}>
         <Col span={24}>
-          <Card title="Recent Transactions" bordered={false}>
+          <Card title="Recent Transactions" variant="borderless">
             <Table columns={columns} dataSource={recentOrdersData} pagination={false} scroll={{ x: 'max-content' }} />
           </Card>
         </Col>

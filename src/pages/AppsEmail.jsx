@@ -1,10 +1,10 @@
 import React from 'react';
-import { Row, Col, Card, Typography, Menu, List, Avatar, Space, Button, Divider, Input } from 'antd';
-import { 
-  InboxOutlined, 
-  SendOutlined, 
-  FileOutlined, 
-  DeleteOutlined, 
+import { Row, Col, Card, Typography, Menu, Avatar, Space, Button, Divider, Input, Grid } from 'antd';
+import {
+  InboxOutlined,
+  SendOutlined,
+  FileOutlined,
+  DeleteOutlined,
   StarOutlined,
   SearchOutlined,
   MoreOutlined,
@@ -16,28 +16,47 @@ import { useOutletContext } from 'react-router-dom';
 const { Title, Text } = Typography;
 
 export default function AppsEmail() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, isLight, themeTokens } = useOutletContext();
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.md === false;
+  const [activeMobileView, setActiveMobileView] = React.useState('list');
 
   const emails = [
-    { id: 1, sender: 'John Anderson', subject: 'Project Update Q3', preview: 'Hey, I just wanted to share the latest updates regarding...', time: '10:30 AM', unread: true },
-    { id: 2, sender: 'Sarah Connor', subject: 'Design Assets', preview: 'Attached are the design assets you requested for the new...', time: 'Yesterday', unread: false },
-    { id: 3, sender: 'Marketing Team', subject: 'Campaign Results', preview: 'The results for the recent email campaign are in and...', time: 'Oct 12', unread: false },
-    { id: 4, sender: 'DevOps', subject: 'Server Maintenance', preview: 'Scheduled server maintenance will occur this weekend...', time: 'Oct 10', unread: true },
+    { id: 1, sender: 'Hammad raja', subject: 'Project Update Q3', preview: 'Hey, I just wanted to share the latest updates regarding...', time: '10:30 AM', unread: true },
+    { id: 2, sender: 'Zain', subject: 'Design Assets', preview: 'Attached are the design assets you requested for the new...', time: 'Yesterday', unread: false },
+    { id: 3, sender: 'Abdullah', subject: 'Campaign Results', preview: 'The results for the recent email campaign are in and...', time: 'Oct 12', unread: false },
+    { id: 4, sender: 'Ali', subject: 'Server Maintenance', preview: 'Scheduled server maintenance will occur this weekend...', time: 'Oct 10', unread: true },
   ];
 
   return (
     <>
       <Title level={4} style={{ marginTop: 0, marginBottom: 24 }}>Inbox</Title>
-      <div className="app-container">
-        <Row style={{ height: '100%', width: '100%' }}>
+
+      {isMobile && (
+        <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
+          <Button style={{ flex: 1 }} type={activeMobileView === 'sidebar' ? 'primary' : 'default'} onClick={() => setActiveMobileView('sidebar')}>Folders</Button>
+          <Button style={{ flex: 1 }} type={activeMobileView === 'list' ? 'primary' : 'default'} onClick={() => setActiveMobileView('list')}>Emails</Button>
+          <Button style={{ flex: 1 }} type={activeMobileView === 'content' ? 'primary' : 'default'} onClick={() => setActiveMobileView('content')}>Reading</Button>
+        </div>
+      )}
+
+      <div className="app-container" style={{ height: isMobile ? 'calc(100dvh - 180px)' : 'calc(100vh - 150px)', overflow: 'hidden', display: 'flex', background: themeTokens.colorBgContainer, border: `1px solid ${themeTokens.colorBorder}` }}>
+        <Row style={{ height: '100%', width: '100%', margin: 0 }}>
           {/* Sidebar */}
-          <Col span={5} className="app-sidebar" style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+          <Col xs={24} md={4} className="app-sidebar" style={{
+            height: '100%',
+            display: isMobile && activeMobileView !== 'sidebar' ? 'none' : 'flex',
+            flexDirection: 'column',
+            background: themeTokens.colorBgContainer,
+            borderRight: isMobile ? 'none' : `1px solid ${themeTokens.colorBorder}`
+          }}>
             <div style={{ padding: 24 }}>
               <Button type="primary" block style={{ background: primaryColor, borderColor: primaryColor, borderRadius: 8 }}>Compose Email</Button>
             </div>
             <Menu
               mode="inline"
               defaultSelectedKeys={['inbox']}
+              theme={isLight ? 'light' : 'dark'}
               style={{ borderRight: 0, flex: 1, background: 'transparent', overflowY: 'auto' }}
               items={[
                 { key: 'inbox', icon: <InboxOutlined />, label: 'Inbox' },
@@ -50,46 +69,53 @@ export default function AppsEmail() {
           </Col>
 
           {/* Email List */}
-          <Col span={8} style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'rgba(0,0,0,0.2)', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <Input prefix={<SearchOutlined style={{ color: '#888' }} />} placeholder="Search emails" bordered={false} style={{ padding: 0 }} />
+          <Col xs={24} md={6} style={{
+            height: '100%',
+            display: isMobile && activeMobileView !== 'list' ? 'none' : 'flex',
+            flexDirection: 'column',
+            background: themeTokens.colorBgLayout,
+            borderRight: isMobile ? 'none' : `1px solid ${themeTokens.colorBorder}`
+          }}>
+            <div style={{ padding: '16px 24px', borderBottom: `1px solid ${themeTokens.colorBorder}` }}>
+              <Input prefix={<SearchOutlined style={{ color: themeTokens.colorTextSecondary }} />} placeholder="Search emails" variant="borderless" style={{ padding: 0, color: themeTokens.colorText }} />
             </div>
-            <List
-              itemLayout="horizontal"
-              dataSource={emails}
-              style={{ flex: 1, overflowY: 'auto' }}
-              renderItem={item => (
-                <List.Item className="premium-hover" style={{ 
-                  padding: '16px 24px', 
-                  borderLeft: item.unread ? `4px solid ${primaryColor}` : '4px solid transparent', 
-                  cursor: 'pointer', 
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {emails.map(item => (
+                <div key={item.id} className="premium-hover" onClick={() => isMobile && setActiveMobileView('content')} style={{
+                  padding: '12px 16px',
+                  borderLeft: item.unread ? `4px solid ${primaryColor}` : '4px solid transparent',
+                  cursor: 'pointer',
                   background: item.unread ? `linear-gradient(90deg, ${primaryColor}20 0%, transparent 100%)` : 'transparent',
-                  borderBottom: '1px solid rgba(255,255,255,0.02)'
+                  borderBottom: `1px solid ${themeTokens.colorBorder}`,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 16
                 }}>
-                  <List.Item.Meta
-                    avatar={<Avatar src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${item.sender}`} />}
-                    title={
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Text strong={item.unread}>{item.sender}</Text>
-                        <Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Text>
-                      </div>
-                    }
-                    description={
-                      <div>
-                        <Text strong={item.unread} style={{ display: 'block', color: 'rgba(255,255,255,0.85)' }}>{item.subject}</Text>
-                        <Text type="secondary" ellipsis style={{ display: 'block', width: '100%' }}>{item.preview}</Text>
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+                  <Avatar src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${item.sender}`} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Text strong={item.unread}>{item.sender}</Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Text>
+                    </div>
+                    <div>
+                      <Text strong={item.unread} style={{ display: 'block', color: themeTokens.colorText, marginTop: 4 }}>{item.subject}</Text>
+                      <Text type="secondary" ellipsis style={{ display: 'block', width: '100%' }}>{item.preview}</Text>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </Col>
 
           {/* Email Content */}
-          <Col span={11} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Col xs={24} md={14} style={{
+            height: '100%',
+            display: isMobile && activeMobileView !== 'content' ? 'none' : 'flex',
+            flexDirection: 'column',
+            background: themeTokens.colorBgContainer
+          }}>
             {/* Top Action Bar */}
-            <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: isMobile ? '8px 12px' : '16px 24px', borderBottom: `1px solid ${themeTokens.colorBorder}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Space size="middle">
                 <Button type="text" icon={<DeleteOutlined />} className="premium-hover" />
                 <Button type="text" icon={<InboxOutlined />} className="premium-hover" title="Archive" />
@@ -102,25 +128,25 @@ export default function AppsEmail() {
             </div>
 
             {/* Email Header */}
-            <div style={{ padding: '24px 24px 0' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                <Title level={4} style={{ margin: 0 }}>Project Update Q3</Title>
-                <Text type="secondary" style={{ fontSize: 12 }}>Oct 14, 2023, 10:30 AM</Text>
+            <div style={{ padding: isMobile ? '8px 12px 0' : '24px 24px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: isMobile ? 4 : 12, flexWrap: 'wrap' }}>
+                <Title level={isMobile ? 5 : 4} style={{ margin: 0, marginRight: 8, fontSize: isMobile ? 16 : undefined }}>Project Update Q3</Title>
+                <Text type="secondary" style={{ fontSize: isMobile ? 11 : 12 }}>Oct 14, 2023, 10:30 AM</Text>
               </div>
-              <Space align="start" style={{ marginBottom: 24 }}>
-                <Avatar size="large" src="https://api.dicebear.com/7.x/avataaars/svg?seed=John Anderson" />
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Title level={5} style={{ margin: 0 }}>John Anderson</Title>
-                    <Text type="secondary">&lt;john.anderson@example.com&gt;</Text>
+              <Space align="start" style={{ marginBottom: isMobile ? 8 : 16 }}>
+                <Avatar size={isMobile ? 32 : "large"} src="https://api.dicebear.com/7.x/avataaars/svg?seed=Hammad007" />
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 4 : 8, flexWrap: 'wrap' }}>
+                    <Text strong style={{ margin: 0, fontSize: isMobile ? 13 : 14 }}>Hammad Raja</Text>
+                    <Text type="secondary" style={{ fontSize: isMobile ? 11 : 12, wordBreak: 'break-all' }}>&lt;jHammad007@example.com&gt;</Text>
                   </div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>to me, Sarah, DevOps</Text>
+                  <Text type="secondary" style={{ fontSize: isMobile ? 11 : 12 }}>to me, Umar, DevOps</Text>
                 </div>
               </Space>
             </div>
 
             {/* Email Body */}
-            <div style={{ padding: '0 24px 24px', flex: 1, overflow: 'auto' }}>
+            <div style={{ padding: isMobile ? '0 12px 12px' : '0 24px 24px', flex: 1, overflow: 'auto', fontSize: isMobile ? 13 : 14, color: themeTokens.colorText }}>
               <Paragraph>
                 Hey Team,
               </Paragraph>
@@ -131,13 +157,13 @@ export default function AppsEmail() {
                 Please review the attached documents for a detailed breakdown of the metrics. We will be discussing these findings in tomorrow's standup.
               </Paragraph>
               <Paragraph>
-                Best,<br/>
-                John Anderson<br/>
+                Best,<br />
+                Hammad Raja<br />
                 <Text type="secondary" style={{ fontSize: 12 }}>Senior Product Manager | Umii Inc.</Text>
               </Paragraph>
-              
+
               {/* Fake Attachment */}
-              <div className="premium-hover" style={{ marginTop: 24, padding: 12, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 12, cursor: 'pointer', background: 'rgba(255,255,255,0.02)' }}>
+              <div className="premium-hover" style={{ marginTop: 24, padding: 12, border: `1px solid ${themeTokens.colorBorder}`, borderRadius: 8, display: 'inline-flex', alignItems: 'center', gap: 12, cursor: 'pointer', background: themeTokens.colorBgLayout }}>
                 <div style={{ background: '#f5222d', color: '#fff', padding: '4px 8px', borderRadius: 4, fontWeight: 'bold', fontSize: 10 }}>PDF</div>
                 <div>
                   <Text strong style={{ display: 'block' }}>Q3_Metrics_Report.pdf</Text>
@@ -147,11 +173,11 @@ export default function AppsEmail() {
             </div>
 
             {/* Reply Area */}
-            <div style={{ padding: '12px 24px', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.1)', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <div style={{ padding: isMobile ? '8px 12px' : '12px 24px', borderTop: `1px solid ${themeTokens.colorBorder}`, background: themeTokens.colorBgLayout, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
               <Avatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" size="small" style={{ marginTop: 4 }} />
               <div style={{ flex: 1 }}>
-                <div style={{ background: '#1e1e1e', border: '1px solid #444', borderRadius: 8, padding: '0px 8px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)' }}>
-                  <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder="Reply to John Anderson..." bordered={false} style={{ color: '#fff', fontSize: 13, resize: 'none', padding: '6px 0' }} />
+                <div style={{ background: themeTokens.colorBgContainer, border: `1px solid ${themeTokens.colorBorder}`, borderRadius: 8, padding: '0px 8px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
+                  <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder="Reply to John Anderson..." variant="borderless" style={{ color: themeTokens.colorText, fontSize: 13, resize: 'none', padding: '6px 0' }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
                   <Space size="middle">
@@ -172,4 +198,7 @@ export default function AppsEmail() {
   );
 }
 
-const Paragraph = ({ children }) => <div style={{ marginBottom: 16, color: 'rgba(255,255,255,0.65)' }}>{children}</div>;
+const Paragraph = ({ children }) => {
+  const { themeTokens } = useOutletContext();
+  return <div style={{ marginBottom: 16, color: themeTokens.colorTextSecondary }}>{children}</div>;
+}

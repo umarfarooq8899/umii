@@ -17,22 +17,22 @@ export default function WidgetsStatic() {
   return (
     <>
       <Title level={4} style={{ marginTop: 0, marginBottom: 24 }}>Static Widgets</Title>
-      
+
       <Row gutter={[24, 24]}>
         {/* User Profile Card */}
         <Col xs={24} md={12} lg={8}>
           <Card bordered={false} style={{ textAlign: 'center' }}>
             <Avatar size={100} src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" style={{ marginBottom: 16 }} />
-            <Title level={4} style={{ margin: 0 }}>Felix Kjellberg</Title>
+            <Title level={4} style={{ margin: 0 }}>Pakistan</Title>
             <Text type="secondary">Senior Developer</Text>
-            
+
             <Space style={{ marginTop: 16 }}>
               <Button type="primary" style={{ background: primaryColor, borderColor: primaryColor }}>Follow</Button>
               <Button>Message</Button>
             </Space>
 
             <Divider />
-            
+
             <Row>
               <Col span={8}>
                 <Title level={4} style={{ margin: 0 }}>245</Title>
@@ -65,7 +65,7 @@ export default function WidgetsStatic() {
                 <Title level={1} style={{ margin: 0, color: index === 1 ? primaryColor : 'inherit' }}>{tier.price}</Title>
                 <Text type="secondary">/ month</Text>
               </div>
-              
+
               <List
                 dataSource={tier.features}
                 renderItem={item => (
@@ -77,7 +77,7 @@ export default function WidgetsStatic() {
                   </List.Item>
                 )}
               />
-              
+
               <Button type={index === 1 ? 'primary' : 'default'} block style={{ marginTop: 24, background: index === 1 ? primaryColor : undefined, borderColor: index === 1 ? primaryColor : undefined }}>
                 Choose Plan
               </Button>

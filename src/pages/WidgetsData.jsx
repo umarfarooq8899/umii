@@ -7,7 +7,7 @@ import { totalViewsData, monthlyRevenueData } from '../data/mockData';
 const { Title, Text } = Typography;
 
 export default function WidgetsData() {
-  const { primaryColor } = useOutletContext();
+  const { primaryColor, isLight } = useOutletContext();
 
   const areaConfig = {
     data: totalViewsData,
@@ -17,6 +17,7 @@ export default function WidgetsData() {
     color: primaryColor,
     style: { fill: `linear-gradient(-90deg, transparent 0%, ${primaryColor} 100%)`, fillOpacity: 0.3 },
     axis: false,
+    theme: isLight ? 'light' : 'dark',
   };
 
   const colConfig = {
@@ -25,6 +26,7 @@ export default function WidgetsData() {
     yField: 'revenue',
     color: '#00e5ff',
     axis: false,
+    theme: isLight ? 'light' : 'dark',
     columnStyle: { radius: [2, 2, 0, 0] },
   };
 
